@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+RELEASE_PATH=$(pwd)/release
+env MIX_HOME=$RELEASE_PATH/.mix $RELEASE_PATH/erlang/bin/erl -- -pa $RELEASE_PATH/elixir/*/ebin -elixir ansi_enabled true -noshell -s elixir start_cli -extra $RELEASE_PATH/elixir/bin/mix $@
