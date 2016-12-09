@@ -6,6 +6,8 @@ Many people use erlang releases only for one reason: to bundle local erlang runt
 
 This tool bundles erlang/elixir locally and creates wrapper scripts for running mix/iex.
 
+Credit for the idea goes to @savonarola
+
 ## Installation
 
   1. Add `exreleasy` to your list of dependencies in `mix.exs`:
