@@ -17,7 +17,7 @@ defmodule Exreleasy.Mixfile do
   end
 
   defp deps do
-    []
+    [{:ex_doc, ">= 0.0.0", only: :dev}]
   end
   
   defp description do
@@ -27,7 +27,7 @@ defmodule Exreleasy.Mixfile do
   defp package do
     [
       name: :exreleasy,
-      files: ["lib", "mix.exs", "README*", "LICENSE"],
+      files: ["lib", "mix.exs", "priv", "README*", "LICENSE"],
       maintainers: ["Miroslav Malkin", "Ilya Averyanov"],
       licenses: ["MIT"],
       links: %{
