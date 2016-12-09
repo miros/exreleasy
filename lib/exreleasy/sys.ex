@@ -1,7 +1,12 @@
 defmodule Exreleasy.Sys do
 
-  def asset_path(path_parts) do
-    Path.join([:code.priv_dir(Exreleasy.app_name)] ++ path_parts)
+  def asset_path(asset_name) do
+    Path.join([:code.priv_dir(Exreleasy.app_name), asset_name])
+  end
+
+  def template_asset(asset_name, dest, params) do
+    data = EEx.eval_file(asset_path(asset_name), params)
+    create_file(data, dest)
   end
 
   def copy_path(source, dest) do
@@ -9,9 +14,14 @@ defmodule Exreleasy.Sys do
     File.cp_r!(source, dest)
   end
 
-  def copy_file(source, dest) do
+  def create_file(data, dest) do
+    File.mkdir_p!(Path.dirname(dest))
     File.rm(dest)
-    File.write!(dest, File.read!(source), [:write])
+    File.write!(dest, data, [:write])
+  end
+
+  def copy_file(source, dest) do
+    create_file(File.read!(source), dest)
   end
 
   def which(binary_name) do
@@ -38,6 +48,10 @@ defmodule Exreleasy.Sys do
       0 -> :ok
       status -> raise "Shell command failed cmd:#{command} status:#{status}"
     end
+  end
+
+  def chmod_as_executable(path) do
+    File.chmod!(path, 0o755) 
   end
 
 end

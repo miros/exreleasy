@@ -1,3 +1,6 @@
 #!/usr/bin/env sh
-RELEASE_PATH=$(pwd)/release
-$RELEASE_PATH/erlang/bin/erl -- -pa $RELEASE_PATH/elixir/*/ebin -elixir ansi_enabled true -user Elixir.IEx.CLI -extra --no-halt +iex $@
+
+SCRIPT_DIR=`dirname $0`
+RELEASE_PATH=`cd $SCRIPT_DIR/../ && pwd`
+
+$RELEASE_PATH/binstubs/erl -- -pa $RELEASE_PATH/elixir/*/ebin -elixir ansi_enabled true -user Elixir.IEx.CLI -extra --no-halt +iex $@

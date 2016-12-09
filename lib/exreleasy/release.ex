@@ -11,6 +11,7 @@ defmodule Exreleasy.Release do
   end
 
   def make(dest) do
+    dest |> Path.dirname |> File.mkdir_p!
     Mix.Task.run("deps.get")
     Mix.Task.run("compile")
     Mix.Task.run("exreleasy.localize")
