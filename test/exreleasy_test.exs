@@ -29,8 +29,9 @@ defmodule ExreleasyTest do
     %{size: release_size} = File.stat!("#{@release_path}/archive/test_release.tar.gz")
     assert release_size > 0
     
-    docker_run(@bare_image, "./release/binstubs/mix run -e ':ok'")
-    docker_run(@bare_image, "./release/binstubs/elixir -e ':ok'")
+    docker_run(@bare_image, ~s{./release/binstubs/mix run -e ":ok"})
+    docker_run(@bare_image, ~s{./release/binstubs/elixir -e ":ok"})
+    docker_run(@bare_image, ~s{./release/binstubs/iex -e "exit(0)"})
   end
 
   defp docker_build_image(image_name, dockerfile_path) do

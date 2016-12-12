@@ -3,4 +3,4 @@
 SCRIPT_DIR=`dirname $0`
 RELEASE_PATH=`cd $SCRIPT_DIR/../ && pwd`
 
-$RELEASE_PATH/binstubs/erl -- -pa $RELEASE_PATH/elixir/*/ebin -elixir ansi_enabled true -user Elixir.IEx.CLI -extra --no-halt +iex "$@"
+$RELEASE_PATH/binstubs/erl -- -pa $RELEASE_PATH/elixir/lib/*/ebin -elixir ansi_enabled true -user Elixir.IEx.CLI -extra --no-halt +iex "$@"
