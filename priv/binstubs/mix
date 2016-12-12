@@ -3,4 +3,4 @@
 SCRIPT_DIR=`dirname $0`
 RELEASE_PATH=`cd $SCRIPT_DIR/../ && pwd`
 
-env MIX_HOME=$RELEASE_PATH/.mix $RELEASE_PATH/binstubs/erl -- -pa $RELEASE_PATH/elixir/lib/*/ebin -elixir ansi_enabled true -noshell -s elixir start_cli -extra $RELEASE_PATH/elixir/bin/mix $@
+env MIX_HOME=$RELEASE_PATH/.mix $RELEASE_PATH/binstubs/erl -- -pa $RELEASE_PATH/elixir/lib/*/ebin -elixir ansi_enabled true -noshell -s elixir start_cli -extra $RELEASE_PATH/elixir/bin/mix "$@"
