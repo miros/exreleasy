@@ -30,6 +30,7 @@ defmodule ExreleasyTest do
     assert release_size > 0
     
     docker_run(@bare_image, "./release/binstubs/mix run -e ':ok'")
+    docker_run(@bare_image, "./release/binstubs/elixir -e ':ok'")
   end
 
   defp docker_build_image(image_name, dockerfile_path) do

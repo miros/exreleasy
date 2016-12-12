@@ -13,6 +13,7 @@ defmodule Exreleasy.Sys do
 
   @spec copy_path(String.t, String.t) :: :ok | no_return
   def copy_path(source, dest) do
+    File.mkdir_p!(Path.dirname(dest))
     File.rm_rf(dest)
     File.cp_r!(source, dest)
     :ok

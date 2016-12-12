@@ -4,7 +4,7 @@ defmodule Exreleasy.Localizer do
   alias Exreleasy.MixTask
 
   @elixir_apps [:elixir, :mix, :eex, :iex, :logger]
-  @elixir_binaries ~w{mix}
+  @elixir_binaries ~w{elixir mix}
 
   @spec run(String.t) :: :ok | no_return
   def run(release_path) do
@@ -35,7 +35,7 @@ defmodule Exreleasy.Localizer do
   defp copy_elixir(release_path) do
     MixTask.say "Preparing elixir"
 
-    dest = make_path(release_path, "elixir")
+    dest = release_path |> make_path("elixir") |> Path.join("lib")
     for app <- @elixir_apps, do: copy_app(app, dest)
     
     :ok
@@ -85,7 +85,7 @@ defmodule Exreleasy.Localizer do
     MixTask.say "Preparing binstubs"
 
     params = [erts_version: to_string(:erlang.system_info(:version))]
-    for asset <- ~w{iex mix erl} do
+    for asset <- ~w{iex mix elixir erl} do
       asset = "binstubs/#{asset}"
       dest = Path.join(release_path, asset)
       Sys.template_asset(asset, dest, params)

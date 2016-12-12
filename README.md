@@ -29,7 +29,8 @@ This will create `./release` directory with erlang/elixir and wrapper scripts:
     ./release/binstubs/mix
     ./release/binstubs/iex
     ./release/binstubs/erl
-    
+    ./release/binstubs/elixir
+
 To make a release:
 
     mix exreleasy.release v0.0.1
