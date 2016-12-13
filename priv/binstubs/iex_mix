@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+SCRIPT_DIR=`dirname $0`
+RELEASE_PATH=`cd $SCRIPT_DIR/../ && pwd`
+
+env MIX_HOME=$RELEASE_PATH/.mix $RELEASE_PATH/binstubs/iex -S $RELEASE_PATH/elixir/bin/mix "$@"

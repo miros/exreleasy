@@ -23,15 +23,16 @@ defmodule ExreleasyTest do
   @tag timeout: 2 * 60 * 1000
   test "it successfully releases project" do
     docker_run(@elixir_image, "mix deps.get && mix compile && mix exreleasy.release test_release")
-    
+
     assert MapSet.new(File.ls!(@release_path)) == MapSet.new(["erlang", "elixir", ".mix", "binstubs", "archive"])
-    
+
     %{size: release_size} = File.stat!("#{@release_path}/archive/test_release.tar.gz")
     assert release_size > 0
-    
+
     docker_run(@bare_image, ~s{./release/binstubs/mix run -e ":ok"})
     docker_run(@bare_image, ~s{./release/binstubs/elixir -e ":ok"})
     docker_run(@bare_image, ~s{./release/binstubs/iex -e "exit(0)"})
+    docker_run(@bare_image, ~s{./release/binstubs/iex_mix run -e ":ok"})
   end
 
   defp docker_build_image(image_name, dockerfile_path) do

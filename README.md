@@ -17,22 +17,23 @@ Credit for the idea goes to @savonarola
       [{:exreleasy, "~> 0.1.0"}]
     end
     ```
-    
+
 ## Usage
 
 To bundle erlang/elixir inside your project:
 
     mix exreleasy.localize
-    
+
 This will create `./release` directory with erlang/elixir and wrapper scripts:
 
     ./release/binstubs/mix
     ./release/binstubs/iex
+    ./release/binstubs/iex_mix
     ./release/binstubs/erl
     ./release/binstubs/elixir
 
 To make a release:
 
     mix exreleasy.release v0.0.1
-    
+
 This will create `./release/archive/v0.0.1.tar.gz` archive with your project (including ./release directory)

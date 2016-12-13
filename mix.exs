@@ -4,7 +4,7 @@ defmodule Exreleasy.Mixfile do
   def project do
     [
       app: :exreleasy,
-      version: "0.1.4",
+      version: "0.1.5",
       elixir: "~> 1.3",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
@@ -29,11 +29,11 @@ defmodule Exreleasy.Mixfile do
       {:dialyxir, "~> 0.4", only: [:dev], runtime: false}
     ]
   end
-  
+
   defp description do
     "A very simple tool for releasing elixir applications."
   end
-  
+
   defp package do
     [
       name: :exreleasy,
@@ -45,5 +45,5 @@ defmodule Exreleasy.Mixfile do
       }
     ]
   end
-  
+
 end

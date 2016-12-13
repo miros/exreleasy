@@ -17,7 +17,7 @@ defmodule Exreleasy.Localizer do
       &install_mix/1,
       &create_binstubs/1
     ]
-    
+
     :ok
   end
 
@@ -27,7 +27,7 @@ defmodule Exreleasy.Localizer do
 
     dest = make_path(release_path, "erlang")
     Sys.copy_path(to_string(:code.root_dir), dest)
-    
+
     :ok
   end
 
@@ -37,7 +37,7 @@ defmodule Exreleasy.Localizer do
 
     dest = release_path |> make_path("elixir") |> Path.join("lib")
     for app <- @elixir_apps, do: copy_app(app, dest)
-    
+
     :ok
   end
 
@@ -54,7 +54,7 @@ defmodule Exreleasy.Localizer do
 
     dest = make_path(release_path, "elixir/bin")
     for binary_name <- @elixir_binaries, do: copy_system_binary(binary_name, dest)
-    
+
     :ok
   end
 
@@ -76,7 +76,7 @@ defmodule Exreleasy.Localizer do
       Mix.Task.run("local.hex", ["--force"])
       Mix.Task.run("local.rebar", ["--force"])
     end
-    
+
     :ok
   end
 
@@ -85,13 +85,13 @@ defmodule Exreleasy.Localizer do
     MixTask.say "Preparing binstubs"
 
     params = [erts_version: to_string(:erlang.system_info(:version))]
-    for asset <- ~w{iex mix elixir erl} do
+    for asset <- ~w{iex mix iex_mix elixir erl} do
       asset = "binstubs/#{asset}"
       dest = Path.join(release_path, asset)
       Sys.template_asset(asset, dest, params)
       Sys.chmod_as_executable(dest)
     end
-    
+
     :ok
   end
 
