@@ -24,7 +24,7 @@ defmodule ExreleasyTest do
   test "it successfully releases project" do
     docker_run(@elixir_image, "mix deps.get && mix compile && mix exreleasy.release test_release")
 
-    assert MapSet.new(File.ls!(@release_path)) == MapSet.new(["erlang", "elixir", ".mix", "binstubs", "archive"])
+    assert MapSet.new(File.ls!(@release_path)) == MapSet.new(~w{erlang elixir .mix .hex binstubs archive})
 
     %{size: release_size} = File.stat!("#{@release_path}/archive/test_release.tar.gz")
     assert release_size > 0

@@ -71,8 +71,10 @@ defmodule Exreleasy.Localizer do
   defp install_mix(release_path) do
     MixTask.say "Preparing mix tools"
 
-    dest = make_path(release_path, ".mix")
-    Sys.with_env %{"MIX_HOME" => dest}, fn ->
+    mix_home = make_path(release_path, ".mix")
+    hex_home = make_path(release_path, ".hex")
+    
+    Sys.with_env %{"MIX_HOME" => mix_home, "HEX_HOME" => hex_home}, fn ->
       Mix.Task.run("local.hex", ["--force"])
       Mix.Task.run("local.rebar", ["--force"])
     end
