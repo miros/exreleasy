@@ -9,7 +9,7 @@ defmodule Exreleasy.Release do
 
   @spec archive_path() :: String.t
   def archive_path do
-    Path.join(path, "archive")
+    Path.join(path(), "archive")
   end
 
   @spec make(String.t) :: :ok | no_return
