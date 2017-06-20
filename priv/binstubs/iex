@@ -3,4 +3,4 @@
 SCRIPT_DIR=`dirname $0`
 RELEASE_PATH=`cd $SCRIPT_DIR/../ && pwd`
 
-env MIX_HOME=$RELEASE_PATH/.mix HEX_HOME=$RELEASE_PATH/.hex $RELEASE_PATH/binstubs/erl -- -pa $RELEASE_PATH/elixir/lib/*/ebin -elixir ansi_enabled true -user Elixir.IEx.CLI -extra --no-halt +iex "$@"
+$RELEASE_PATH/binstubs/elixir --no-halt --erl "-user Elixir.IEx.CLI" +iex "$@"
