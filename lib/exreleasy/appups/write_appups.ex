@@ -3,6 +3,7 @@ defmodule Exreleasy.Appups.WriteAppups do
   alias Exreleasy.Manifests.Manifest
   alias Exreleasy.Manifests.Storage
   alias Exreleasy.Appups.Appup
+  alias Exreleasy.Release
 
   @spec run(Path.t, Path.t) :: :ok | :no_return
   def run(old_manifest_path, new_manifest_path) do
@@ -23,7 +24,9 @@ defmodule Exreleasy.Appups.WriteAppups do
       {:error, :unchanged} ->
         :ok
       {:ok, appup} ->
-        app_name |> appup_path |> File.write!(:io_lib.format('~p', [appup]))
+        path = appup_path(app_name)
+        path |> Path.dirname |> File.mkdir_p!
+        File.write!(path, :io_lib.format('~p.', [appup]))
     end
   end
 
@@ -35,7 +38,7 @@ defmodule Exreleasy.Appups.WriteAppups do
   end
 
   defp appup_path(app_name) do
-    "#{app_name}.appup.src"
+    Release.path() |> Path.join("#{app_name}.appup.src")
   end
 
 end

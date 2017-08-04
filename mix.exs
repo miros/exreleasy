@@ -20,12 +20,16 @@ defmodule Exreleasy.Mixfile do
   end
 
   def application do
-    [applications: [:logger, :mix]]
+    [
+      mod: {Exreleasy.Application, []},
+      extra_applications: [:logger, :mix]
+    ]
   end
 
   defp deps do
     [
       {:poison, ">= 0.0.0"},
+      {:optimus, "~> 0.1.0"},
       {:ex_doc, ">= 0.0.0", only: :dev},
       {:dialyxir, "~> 0.4", only: [:dev], runtime: false}
     ]

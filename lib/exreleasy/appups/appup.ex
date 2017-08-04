@@ -11,7 +11,7 @@ defmodule Exreleasy.Appups.Appup do
       [] ->
         {:error, :unchanged}
       [_|_] ->
-        {:ok, {new_app.version, [{"[0-9]+\\.[0-9]+\\.[0-9]+", instructions}], []}}
+        {:ok, {to_charlist(new_app.version), [{"[0-9]+\\.[0-9]+\\.[0-9]+", instructions}], []}}
     end
   end
 
