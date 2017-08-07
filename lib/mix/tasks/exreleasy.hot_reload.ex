@@ -2,6 +2,9 @@ defmodule Mix.Tasks.Exreleasy.HotReload do
   use Mix.Task
   import Exreleasy.MixTask
 
+  alias Exreleasy.Appups.Storage, as: AppupStorage
+
+
   @moduledoc """
     Reloads given apps on running node
 
@@ -10,7 +13,7 @@ defmodule Mix.Tasks.Exreleasy.HotReload do
 
   @shortdoc "Creates appup files for applications"
   def run(args) do
-    options = parse(args)
+    options = parse_cli(args, cli_description())
 
     start_distributed_erlang(options)
 
@@ -29,13 +32,16 @@ defmodule Mix.Tasks.Exreleasy.HotReload do
 
   defp do_reload(options) do
     node = String.to_atom(options[:node])
-    apps = Enum.map(options[:apps], &String.to_atom/1)
+    apps = apps_to_reload(options)
     Exreleasy.HotReloader.reload(node, options[:new_project_path], apps)
   end
 
-  defp parse(args) do
-    results = cli_description() |> Optimus.new! |> Optimus.parse!(args)
-    results.options
+  defp apps_to_reload(options) do
+    if options[:apps] do
+      Enum.map(options[:apps], &String.to_atom/1)
+    else
+      AppupStorage.apps_to_reload(options[:new_project_path])
+    end
   end
 
   defp cli_description do
@@ -58,7 +64,7 @@ defmodule Mix.Tasks.Exreleasy.HotReload do
         ],
         new_project_path: [
           value_name: "NEW_PROJECT_PATH",
-          long: "--new-project-path",
+          long: "--new-path",
           help: "Path to new project code",
           required: true
         ],
@@ -67,7 +73,7 @@ defmodule Mix.Tasks.Exreleasy.HotReload do
           long: "--apps",
           help: "Applications to reload",
           parser: fn (str) -> {:ok, String.split(str, ",")} end,
-          required: true
+          required: false
         ],
       ]
     ]

@@ -1,24 +1,19 @@
-defmodule Exreleasy.Manifests.WriteManifest do
+defmodule Exreleasy.Manifests.CreateManifest do
 
-  alias Exreleasy.Release
   alias Exreleasy.Manifests.Manifest
   alias Exreleasy.Manifests.Storage
 
-  @manifest_file "exreleasy.json"
+  @spec run(Path.t) :: :ok | no_return
+  def run(release_path) do
+    manifest_path = Path.join(release_path, Manifest.filename())
 
-  @spec run() :: :ok | :no_return
-  def run() do
     with {:ok, manifest} <- current_applications() |> Manifest.digest(),
-         :ok <- manifest_path() |> Path.dirname |> File.mkdir_p(),
-         :ok <- Storage.save(manifest_path(), manifest) do
+         :ok <-  manifest_path |> Path.dirname |> File.mkdir_p(),
+         :ok <- Storage.save(manifest_path, manifest) do
       :ok
     else
       error -> throw(error)
     end
-  end
-
-  defp manifest_path do
-    Release.path |> Path.join(@manifest_file)
   end
 
   defp current_applications() do

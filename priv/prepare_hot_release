@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [ "$#" -ne 3 ]; then
+    echo "USAGE $0 MIX_ENV OLD_RELEASE_PATH NEW_RELEASE_PATH"
+    exit 1
+fi
+
+export MIX_ENV=$1
+OLD_RELEASE=$2
+NEW_RELEASE=$3
+
+echo "Migrating $OLD_RELEASE -> $NEW_RELEASE"
+
+APPUP_PATH=$(mktemp)
+
+mix exreleasy.create_appup --old-release $OLD_RELEASE --new-release $NEW_RELEASE --appup $APPUP_PATH
+$EDITOR $APPUP_PATH
+mix exreleasy.apply_appup --release $NEW_RELEASE --appup $APPUP_PATH
+
+echo "DONE! release $NEW_RELEASE is ready"

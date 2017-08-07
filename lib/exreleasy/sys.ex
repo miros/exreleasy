@@ -26,7 +26,7 @@ defmodule Exreleasy.Sys do
     File.write!(dest, data, [:write])
     :ok
   end
-  
+
   @spec copy_file(String.t, String.t) :: :ok | no_return
   def copy_file(source, dest) do
     create_file(File.read!(source), dest)
@@ -52,7 +52,7 @@ defmodule Exreleasy.Sys do
       System.put_env(old_params)
     end
   end
-  
+
   @spec cmd!(String.t) :: :ok | no_return
   def cmd!(command) do
     case Mix.shell.cmd(command) do
@@ -63,7 +63,28 @@ defmodule Exreleasy.Sys do
 
   @spec chmod_as_executable(String.t) :: :ok | no_return
   def chmod_as_executable(path) do
-    File.chmod!(path, 0o755) 
+    File.chmod!(path, 0o755)
+  end
+
+  @spec in_tmp_dir((Path.t -> term)) :: {:ok, term} | {:error, term}
+  def in_tmp_dir(fun) do
+    tmp_path = tmp_path()
+    with :ok <- File.mkdir(tmp_path) do
+      try do
+        fun.(tmp_path)
+      after
+        File.rm_rf(tmp_path)
+      end
+    end
+  end
+
+  @spec tmp_path() :: Path.t
+  def tmp_path() do
+    Path.join("/tmp", random_string())
+  end
+
+  defp random_string() do
+    :crypto.strong_rand_bytes(30) |> Base.url_encode64
   end
 
 end

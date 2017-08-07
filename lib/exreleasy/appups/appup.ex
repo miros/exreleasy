@@ -1,6 +1,12 @@
 defmodule Exreleasy.Appups.Appup do
 
   alias Exreleasy.Manifests.App
+  alias Exreleasy.Release
+
+  @spec release_path() :: Path.t
+  def release_path() do
+    Path.join(Release.dir(), "appups")
+  end
 
   @spec make(App.t, App.t) :: term
   def make(old_app, new_app) do
@@ -11,7 +17,7 @@ defmodule Exreleasy.Appups.Appup do
       [] ->
         {:error, :unchanged}
       [_|_] ->
-        {:ok, {to_charlist(new_app.version), [{"[0-9]+\\.[0-9]+\\.[0-9]+", instructions}], []}}
+        {:ok, {to_charlist(new_app.version), [{to_charlist(old_app.version), instructions}], []}}
     end
   end
 

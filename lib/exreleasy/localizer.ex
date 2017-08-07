@@ -2,6 +2,7 @@ defmodule Exreleasy.Localizer do
 
   alias Exreleasy.Sys
   alias Exreleasy.MixTask
+  alias Exreleasy.Manifests.CreateManifest
 
   @elixir_apps [:elixir, :mix, :eex, :iex, :logger]
   @elixir_binaries ~w{elixir mix}
@@ -15,7 +16,8 @@ defmodule Exreleasy.Localizer do
       &copy_elixir/1,
       &copy_elixir_binaries/1,
       &install_mix/1,
-      &create_binstubs/1
+      &create_binstubs/1,
+      &CreateManifest.run/1,
     ]
 
     :ok
@@ -73,7 +75,7 @@ defmodule Exreleasy.Localizer do
 
     mix_home = make_path(release_path, ".mix")
     hex_home = make_path(release_path, ".hex")
-    
+
     Sys.with_env %{"MIX_HOME" => mix_home, "HEX_HOME" => hex_home}, fn ->
       Mix.Task.run("local.hex", ["--force"])
       Mix.Task.run("local.rebar", ["--force"])

@@ -2,6 +2,7 @@ defmodule Exreleasy.Manifests.Manifest do
 
   alias __MODULE__
   alias Exreleasy.Manifests.App
+  alias Exreleasy.Release
 
   defstruct [
     apps: %{}
@@ -10,6 +11,16 @@ defmodule Exreleasy.Manifests.Manifest do
   @type t :: %__MODULE__{
     apps: %{atom => App.t}
   }
+
+  @spec release_path() :: Path.t
+  def release_path() do
+    Path.join(Release.dir(), filename())
+  end
+
+  @spec release_path() :: Path.t
+  def filename() do
+    "exreleasy.json"
+  end
 
   @spec new(map) :: t
   def new(options) do
