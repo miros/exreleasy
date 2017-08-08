@@ -3,13 +3,16 @@ defmodule Exreleasy.Manifests.Manifest do
   alias __MODULE__
   alias Exreleasy.Manifests.App
   alias Exreleasy.Release
+  alias Exreleasy.CurrentProject
 
   defstruct [
-    apps: %{}
+    apps: %{},
+    deps: %{},
   ]
 
   @type t :: %__MODULE__{
-    apps: %{atom => App.t}
+    apps: %{atom => App.t},
+    deps: %{atom => String.t},
   }
 
   @spec in_release_path() :: Path.t
@@ -25,13 +28,20 @@ defmodule Exreleasy.Manifests.Manifest do
   @spec new(map) :: t
   def new(options) do
     apps = options["apps"] |> Enum.map(fn {k,v} -> {String.to_atom(k), App.new(v)} end) |> Enum.into(%{})
-    %Manifest{apps: apps}
+    deps = options["deps"] |> Enum.map(fn {k,v} -> {String.to_atom(k), v} end) |> Enum.into(%{})
+
+    %Manifest{apps: apps, deps: deps}
   end
 
   @spec digest([atom]) :: {:ok, t} | {:error, term}
   def digest(apps) do
-    with {:ok, app_digests} <- digest_apps(apps, %{}) do
-      {:ok, %Manifest{apps: app_digests}}
+    with {:ok, app_digests} <- digest_apps(apps, %{}),
+         {:ok, deps} <- CurrentProject.dependencies_versions() do
+      manifest = %Manifest{
+        apps: app_digests,
+        deps: deps
+      }
+      {:ok, manifest}
     end
   end
 

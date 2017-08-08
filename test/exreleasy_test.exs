@@ -21,7 +21,7 @@ defmodule ExreleasyTest do
     :ok
   end
 
-  @tag timeout: 2 * 60 * 1000
+  @tag timeout: 3 * 60 * 1000
   test "it successfully releases project" do
     docker_run(@elixir_image, "mix deps.get && mix compile && mix exreleasy.release test_release")
 
@@ -34,7 +34,7 @@ defmodule ExreleasyTest do
     docker_run(@bare_image, ~s{./release/binstubs/iex_mix run -e ":ok"})
   end
 
-  @tag timeout: 2 * 60 * 1000
+  @tag timeout: 3 * 60 * 1000
   test "it creates appup file for hot reload" do
     docker_run(@elixir_image, "mix deps.get && mix compile && mix exreleasy.release test_release")
 

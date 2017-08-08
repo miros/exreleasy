@@ -1,6 +1,7 @@
 defmodule Exreleasy.Manifests.App do
 
   alias __MODULE__
+  alias Exreleasy.CurrentProject
 
   @derive [Poison.Encoder]
   defstruct [:version, :modules]
@@ -16,17 +17,11 @@ defmodule Exreleasy.Manifests.App do
     %App{version: options["version"], modules: modules}
   end
 
+  require IEx
+
   @spec digest(atom) :: t
   def digest(app_name) do
-
-    # TODO temporary hack
-    :code.lib_dir(:exreleasy)
-    |> to_string
-    |> String.replace("exreleasy", to_string(app_name))
-    |> Path.join("ebin")
-    |> Code.prepend_path()
-
-    with :ok <- Application.load(app_name),
+    with :ok <- CurrentProject.ensure_loaded(app_name),
          {:ok, modules} <- :application.get_key(app_name, :modules),
          {:ok, vsn} <- :application.get_key(app_name, :vsn) do
       {:ok, %App{modules: digest_modules(modules), version: to_string(vsn)}}

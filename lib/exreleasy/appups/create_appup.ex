@@ -7,13 +7,18 @@ defmodule Exreleasy.Appups.CreateAppup do
   @spec run(map) :: :ok | no_return
   def run(%{old_release_path: old_release_path, new_release_path: new_release_path, appup_path: appup_path}) do
     with {:ok, old_manifest} <- Storage.load(old_release_path),
-         {:ok, new_manifest} <- Storage.load(new_release_path) do
+         {:ok, new_manifest} <- Storage.load(new_release_path),
+         :ok <- check_deps(old_manifest.deps, new_manifest.deps) do
       full_appup_for(old_manifest, new_manifest) |> save(appup_path)
       :ok
     else
       error -> throw(error)
     end
   end
+
+  defp check_deps(deps, deps), do: :ok
+  defp check_deps(old_deps, new_deps),
+    do: {:error, "dependencies changed old:#{inspect(old_deps)} new:#{inspect(new_deps)}"}
 
   defp full_appup_for(old_manifest, new_manifest) do
     for app_name <- common_apps(old_manifest, new_manifest), do:

@@ -1,1 +1,4 @@
-{"apps": {"test_app": {"version": "0.1.0", "modules": []}}}
+{
+  "apps": {"test_app": {"version": "0.1.0", "modules": []}},
+  "deps": {"optimus": "0.1.3", "poison": "3.1.0"}
+}
