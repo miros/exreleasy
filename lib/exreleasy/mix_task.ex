@@ -19,7 +19,7 @@ defmodule Exreleasy.MixTask do
   @spec parse_cli(list, list) :: map | no_return
   def parse_cli(args, description) do
     results = description |> Optimus.new! |> Optimus.parse!(args)
-    results.options
+    Map.merge(results.options, results.flags)
   end
 
 end

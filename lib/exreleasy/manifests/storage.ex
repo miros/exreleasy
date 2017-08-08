@@ -17,7 +17,7 @@ defmodule Exreleasy.Manifests.Storage do
 
   defp read(path) do
     if String.ends_with?(path, ".tar.gz") do
-      Release.read_file(path, Manifest.release_path())
+      Release.read_file(path, Manifest.in_release_path())
     else
       File.read(path)
     end

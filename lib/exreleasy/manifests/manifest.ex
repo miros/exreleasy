@@ -12,12 +12,12 @@ defmodule Exreleasy.Manifests.Manifest do
     apps: %{atom => App.t}
   }
 
-  @spec release_path() :: Path.t
-  def release_path() do
+  @spec in_release_path() :: Path.t
+  def in_release_path() do
     Path.join(Release.dir(), filename())
   end
 
-  @spec release_path() :: Path.t
+  @spec filename() :: Path.t
   def filename() do
     "exreleasy.json"
   end

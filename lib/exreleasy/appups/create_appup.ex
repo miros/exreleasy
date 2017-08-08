@@ -30,7 +30,7 @@ defmodule Exreleasy.Appups.CreateAppup do
   end
 
   defp save(appup, dest) do
-    File.write!(dest, :io_lib.format('~p.', [appup]))
+    File.write!(dest, :io_lib.format('~p.\n', [appup]))
   end
 
   defp common_apps(old_manifest, new_manifest) do

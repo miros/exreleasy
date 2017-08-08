@@ -16,7 +16,7 @@ defmodule Exreleasy.Appups.ApplyAppup do
 
   def file_list_for(appup_path) do
     with {:ok, release_appup} <- Storage.load(appup_path) do
-      full_appup = {Appup.release_path(), File.read!(appup_path)}
+      full_appup = {Appup.in_release_path(), File.read!(appup_path)}
       appup_files = for {app_name, appup} <- release_appup, do: {apppup_path(app_name), serialize(appup)}
       {:ok, [full_appup|appup_files]}
     end

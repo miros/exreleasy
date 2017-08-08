@@ -3,15 +3,15 @@ defmodule Exreleasy.Appups.Appup do
   alias Exreleasy.Manifests.App
   alias Exreleasy.Release
 
-  @spec release_path() :: Path.t
-  def release_path() do
+  @spec in_release_path() :: Path.t
+  def in_release_path() do
     Path.join(Release.dir(), "appups")
   end
 
   @spec make(App.t, App.t) :: term
   def make(old_app, new_app) do
-    instructions = reload_modules(old_app.modules, new_app.modules) ++
-      remove_modules(old_app.modules, new_app.modules)
+    instructions = modules_to_reload(old_app.modules, new_app.modules) ++
+      modules_to_remove(old_app.modules, new_app.modules)
 
     case instructions do
       [] ->
@@ -21,7 +21,7 @@ defmodule Exreleasy.Appups.Appup do
     end
   end
 
-  defp reload_modules(old_modules, new_modules) do
+  defp modules_to_reload(old_modules, new_modules) do
     new_modules
     |> Enum.map(&(load_or_update(&1, old_modules)))
     |> Enum.reject(&is_nil/1)
@@ -37,7 +37,7 @@ defmodule Exreleasy.Appups.Appup do
     end
   end
 
-  defp remove_modules(old_modules, new_modules) do
+  defp modules_to_remove(old_modules, new_modules) do
     removed_modules = Map.keys(old_modules) -- Map.keys(new_modules)
     Enum.map(removed_modules, &({:delete_module, &1}))
   end

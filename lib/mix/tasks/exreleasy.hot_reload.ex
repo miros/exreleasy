@@ -19,7 +19,7 @@ defmodule Mix.Tasks.Exreleasy.HotReload do
 
     case do_reload(options) do
       :ok ->
-        say "App reloaded!"
+        say "Apps reloaded!"
       {:error, error} ->
         say "Error reloading apps: #{inspect(error)}"
     end
@@ -33,7 +33,9 @@ defmodule Mix.Tasks.Exreleasy.HotReload do
   defp do_reload(options) do
     node = String.to_atom(options[:node])
     apps = apps_to_reload(options)
-    Exreleasy.HotReloader.reload(node, options[:new_project_path], apps)
+
+    Exreleasy.HotReloader.reload(node, options[:new_project_path], apps,
+      reload_configs: options[:reload_configs])
   end
 
   defp apps_to_reload(options) do
@@ -75,6 +77,13 @@ defmodule Mix.Tasks.Exreleasy.HotReload do
           parser: fn (str) -> {:ok, String.split(str, ",")} end,
           required: false
         ],
+      ],
+      flags: [
+        reload_configs: [
+          value_name: "RELOAD_CONFIGS",
+          long: "--reload-configs",
+          help: "Reload configs as well",
+        ]
       ]
     ]
   end

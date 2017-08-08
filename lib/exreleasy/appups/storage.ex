@@ -4,7 +4,7 @@ defmodule Exreleasy.Appups.Storage do
 
   @spec apps_to_reload(Path.t) :: [atom]
   def apps_to_reload(release_path) do
-    case Path.join(release_path, Appup.release_path) |> load() do
+    case Path.join(release_path, Appup.in_release_path) |> load() do
       {:ok, appups} ->
         for {app_name, _} <- appups, do: app_name
       {:error, _} -> []
