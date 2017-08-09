@@ -7,24 +7,20 @@ defmodule ExreleasyTest do
 
   @elixir_image "exreleasy_test_elixir"
   @bare_image "exreleasy_test_bare"
+  @release_path "test_app/release"
 
   setup_all do
     docker_build_image(@elixir_image, "test/Dockerfile.elixir")
     docker_build_image(@bare_image, "test/Dockerfile.bare")
-    :ok
-  end
 
-  @release_path "test_app/release"
-
-  setup do
     File.rm_rf!(@release_path)
+    docker_run(@elixir_image, "mix deps.get && mix compile && mix exreleasy.release test_release")
+
     :ok
   end
 
   @tag timeout: 3 * 60 * 1000
   test "it successfully releases project" do
-    docker_run(@elixir_image, "mix deps.get && mix compile && mix exreleasy.release test_release")
-
     assert MapSet.new(File.ls!(@release_path)) == MapSet.new(~w{erlang elixir .mix .hex binstubs archive exreleasy.json})
     assert_exists("archive/test_release.tar.gz")
 
@@ -36,8 +32,6 @@ defmodule ExreleasyTest do
 
   @tag timeout: 3 * 60 * 1000
   test "it creates appup file for hot reload" do
-    docker_run(@elixir_image, "mix deps.get && mix compile && mix exreleasy.release test_release")
-
     docker_run(@elixir_image, "mix exreleasy.create_appup \
       --old-release empty_manifest.json --new-release release/archive/test_release.tar.gz --appup release/appups")
 

@@ -25,29 +25,11 @@ defmodule Exreleasy.CurrentProject do
     end
   end
 
-  @spec dependencies() :: {:ok, [atom]} | {:error, term}
-  def dependencies do
-    with {:ok, deps} <- Mix.Project.config[:deps_path] |> File.ls() do
-      {:ok, Enum.map(deps, &String.to_atom/1)}
-    end
-  end
-
   @spec dependencies_versions() :: {:ok, map} | {:error, term}
   def dependencies_versions() do
-    with {:ok, deps} <- dependencies(),
-      do: do_get_deps_versions(deps, %{})
-  end
-
-  defp do_get_deps_versions([], versions), do: {:ok, versions}
-  defp do_get_deps_versions([dep_name|other_deps], versions) do
-    with :ok <- ensure_loaded(dep_name),
-         {:ok, vsn} <- :application.get_key(dep_name, :vsn)
-    do
-      versions = Map.put(versions, dep_name, to_string(vsn))
-      do_get_deps_versions(other_deps, versions)
-    else
-      {:error, error} -> {:error, {dep_name, "can not get version", error}}
-    end
+    deps = for {name, attrs} <- Mix.Dep.Lock.read,
+      do: {name, elem(attrs, 2)}, into: %{}
+    {:ok, deps}
   end
 
 end
