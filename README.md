@@ -30,7 +30,7 @@ Credit for the idea goes to [savonarola](https://github.com/savonarola).
 
 ## Usage
 
-To bundle Erlang/Elixir inside your project:
+### To bundle Erlang/Elixir inside your project:
 
     mix exreleasy.localize
 
@@ -42,13 +42,13 @@ This will create `./release` directory with Erlang/Elixir and wrapper scripts:
     ./release/binstubs/erl
     ./release/binstubs/elixir
 
-To make a release:
+### To make a release:
 
     mix exreleasy.release v0.0.1
 
 This will create `./release/archive/v0.0.1.tar.gz` archive with your project (including `./release` directory)
 
-To hot reload your code:
+### To hot reload your code:
 
 * Step 1
 
@@ -73,7 +73,7 @@ Apply appup file to release (creates individual appup files in ebin directories)
 
     mix exreleasy.apply_appup --release ./release/archive/v0.0.2.tar.gz --appup ./appup_1_to_2
 
-Alternatively Steps 1-3 can be automized using provided script
+Alternatively Steps 1-3 can be automated using provided script
 
     ./deps/exreleasy/priv/prepare_hot_release prod /path/to/old/release.tar.gz /path/to/new/release.tar.gz
 
