@@ -1,30 +1,40 @@
 # Exreleasy
 
-A very simple tool for releasing elixir applications.
+A minimal tool for releasing (packaging and hot updating) Elixir applications.
 
-Many people use erlang releases only for one reason: to bundle local erlang runtime inside the project. But unfortunatelly you loose the ability to run mix.
+Standard Erlang/Elixir release tools generally attempt to generate a self contained package which contains bootup scripts, VM  arguments, shell scripts for launching nodes in the system, appup files, etc.
 
-This tool bundles erlang/elixir locally and creates wrapper scripts for running mix/iex.
+To the contrary, `exreleasy` tries to untie developer's hands and decouple release activities.
 
-Credit for the idea goes to @savonarola
+This tool allows to *seperately*:
+* bundle an application and Erlang/Elixir with a single `mix` command and create wrapper scripts for running `mix`/`iex`;
+* generate a draft for an appup file for migrating from any existing release to another one;
+* perfom a hot code reload for a running node.
+
+This is often required nowdays when we have special tools for each task, for example:
+* deliver application code with Ansible(SaltStack or some other orchestration tool);
+* launch nodes with Systemd generating units with an orchestration tool;
+* perform maintenance tasks like running migrations or code reload with an orchestration tool.
+
+Credit for the idea goes to [savonarola](https://github.com/savonarola).
 
 ## Installation
 
   1. Add `exreleasy` to your list of dependencies in `mix.exs`:
 
-    ```elixir
-    def deps do
-      [{:exreleasy, "~> 0.1.0"}]
-    end
-    ```
+  ```elixir
+  def deps do
+    [{:exreleasy, "~> 0.1.0"}]
+  end
+  ```
 
 ## Usage
 
-To bundle erlang/elixir inside your project:
+To bundle Erlang/Elixir inside your project:
 
     mix exreleasy.localize
 
-This will create `./release` directory with erlang/elixir and wrapper scripts:
+This will create `./release` directory with Erlang/Elixir and wrapper scripts:
 
     ./release/binstubs/mix
     ./release/binstubs/iex
@@ -36,7 +46,7 @@ To make a release:
 
     mix exreleasy.release v0.0.1
 
-This will create `./release/archive/v0.0.1.tar.gz` archive with your project (including ./release directory)
+This will create `./release/archive/v0.0.1.tar.gz` archive with your project (including `./release` directory)
 
 To hot reload your code:
 
@@ -46,7 +56,7 @@ Generate appup file for all applications of your project.
 
     mix exreleasy.create_appup --old-release ./release/archive/v0.0.1.tar.gz --new-release ./release/archive/v0.0.2.tar.gz --appup ./appup_1_to_2
 
-Alternatively use release/exreleasy.json from old release (fetch it from production maybe)
+Alternatively use `release/exreleasy.json` from old release (fetch it from production maybe)
 
     mix exreleasy.create_appup --old-release /path/to/old/manifest.json --new-release ./release/archive/v0.0.2.tar.gz --appup ./appup_1_to_2
 
