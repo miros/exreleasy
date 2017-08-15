@@ -24,7 +24,7 @@ Credit for the idea goes to [savonarola](https://github.com/savonarola).
 
   ```elixir
   def deps do
-    [{:exreleasy, "~> 0.1.0"}]
+    [{:exreleasy, "~> 0.2.0"}]
   end
   ```
 
