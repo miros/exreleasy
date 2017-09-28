@@ -6,6 +6,8 @@ defmodule Mix.Tasks.Exreleasy.ApplyAppup do
     Applies appup file to release
 
         mix exreleasy.apply_appup --release /path/to/your/release.tar.gz --appup /path/to/your/appup
+        mix exreleasy.apply_appup --release /path/to/your/release/folder --appup /path/to/your/appup
+
   """
 
   @shortdoc "Applies appup file to release"
@@ -23,7 +25,7 @@ defmodule Mix.Tasks.Exreleasy.ApplyAppup do
         release_path: [
           value_name: "RELEASE_PATH",
           long: "--release",
-          help: "Path release archive",
+          help: "Path to release archive or folder",
           required: true
         ],
         appup_path: [

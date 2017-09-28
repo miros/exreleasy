@@ -1,6 +1,7 @@
 defmodule Exreleasy.Release do
 
   alias Exreleasy.Sys
+  alias Exreleasy.ReleaseDir
 
   @spec path() :: String.t
   def path do
@@ -37,26 +38,20 @@ defmodule Exreleasy.Release do
     end
   end
 
-  @spec modify(Path.t, [{Path.t, binary}]) :: :ok | {:error, term}
-  def modify(release_path, filelist) do
+  @spec add_files(Path.t, [{Path.t, binary}]) :: :ok | {:error, term}
+  def add_files(release_path, filelist) do
+    modify_archive(release_path, fn(path) -> ReleaseDir.add_files(path, filelist) end)
+  end
+
+  def modify_archive(release_path, action) do
     Sys.in_tmp_dir(fn(tmp_path) ->
       with :ok <- extract_to(release_path, tmp_path),
-           :ok <- add_files(tmp_path, filelist),
+           :ok <- action.(tmp_path),
            :ok <- archive_to(release_path, tmp_path)
       do
         :ok
       end
     end)
-  end
-
-  defp add_files(_path, []), do: :ok
-  defp add_files(path, [{file_name, data}|other_files]) do
-    case File.write!(path |> Path.join(file_name), data, [:write]) do
-      :ok ->
-        add_files(path, other_files)
-      {:error, error} ->
-        {:error, error}
-    end
   end
 
   @spec archive_to(Path.t) :: :ok | no_return

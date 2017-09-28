@@ -39,7 +39,7 @@ defmodule Mix.Tasks.Exreleasy.HotReload do
   end
 
   defp fully_qualified?(node) do
-    Regex.match?(~r/\.[a-zA-Z0-9-]+\Z/, to_string(node))
+    Regex.match?(~r/\.[a-zA-Z0-9-]+\z/, to_string(node))
   end
 
   defp do_reload(options) do
