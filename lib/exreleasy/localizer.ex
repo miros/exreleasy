@@ -3,6 +3,7 @@ defmodule Exreleasy.Localizer do
   alias Exreleasy.Sys
   alias Exreleasy.MixTask
   alias Exreleasy.Manifests.CreateManifest
+  alias Exreleasy.Manifests.Manifest
 
   @elixir_apps [:elixir, :mix, :eex, :iex, :logger]
   @elixir_binaries ~w{elixir mix}
@@ -17,7 +18,7 @@ defmodule Exreleasy.Localizer do
       &copy_elixir_binaries/1,
       &install_mix/1,
       &create_binstubs/1,
-      &CreateManifest.run/1,
+      &create_manifest/1,
     ]
 
     :ok
@@ -97,6 +98,10 @@ defmodule Exreleasy.Localizer do
     end
 
     :ok
+  end
+
+  defp create_manifest(release_path) do
+    Path.join(release_path, Manifest.filename()) |> CreateManifest.run()
   end
 
   @spec make_path(String.t, String.t) :: String.t | no_return
