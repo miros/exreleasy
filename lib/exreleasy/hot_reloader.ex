@@ -6,31 +6,43 @@ defmodule Exreleasy.HotReloader do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
-  @spec reload(node, Path.t, [atom], map) :: :ok | {:error, term}
+  @spec upgrade(node, Path.t, [keyword()], map) :: :ok | {:error, term}
+  def upgrade(node, new_project_path, apps, options) do
+    options = Map.new(options) |> Map.merge(%{reloader: &upgrade_app/2})
+    GenServer.call({__MODULE__, node}, {:reload, new_project_path, apps, options})
+  end
+
+  @spec downgrade(node, Path.t, [keyword()], map) :: :ok | {:error, term}
+  def downgrade(node, new_project_path, apps, options) do
+    options = Map.new(options) |> Map.merge(%{reloader: &downgrade_app/2})
+    GenServer.call({__MODULE__, node}, {:reload, new_project_path, apps, options})
+  end
+
+  @spec reload(node, Path.t, map, map) :: :ok | {:error, term}
   def reload(node, new_project_path, apps, options) do
     GenServer.call({__MODULE__, node}, {:reload, new_project_path, apps, Map.new(options)})
   end
 
   def handle_call({:reload, new_project_path, apps, options}, _from, state) do
-    reply = with :ok <- reload_apps(new_project_path, apps, options),
-                 :ok <- reload_configs(new_project_path, options),
-                 do: :ok
-
+    reloader = Map.fetch!(options, :reloader)
+    reply = with :ok <- reload_apps(new_project_path, apps, reloader),
+         :ok <- reload_configs(new_project_path, options),
+         do: :ok
     {:reply, reply, state}
   end
 
-  defp reload_apps(new_project_path, apps, options) do
-    results = for name <- apps, do: {name, reload_app(new_project_path, name, options)}
+  defp reload_apps(new_project_path, apps, reloader) do
+    results = for {app_name, _} = app <- apps,
+      do: {app_name, reload_app(new_project_path, app, reloader)}
     case Enum.filter(results, &match?({_, {:error, _}}, &1)) do
       [] -> :ok
       errors -> {:error, errors}
     end
   end
 
-  defp reload_app(new_project_path, name, options) do
-    reloader = options |> Map.get(:reloader, &default_reloader/2)
-    path = new_project_path |> Path.join("_build/#{Mix.env}/lib/#{name}")
-    reloader.(name, path)
+  defp reload_app(new_project_path, {app_name, _app_version} = app, reloader) do
+    path = new_project_path |> Path.join("_build/#{Mix.env}/lib/#{app_name}")
+    reloader.(app, path)
   end
 
   defp reload_configs(new_project_path, %{reload_configs: true}),
@@ -47,8 +59,12 @@ defmodule Exreleasy.HotReloader do
     exc -> {:error, exc}
   end
 
-  defp default_reloader(app_name, new_path) do
+  defp upgrade_app({app_name, _app_version}, new_path) do
     :release_handler.upgrade_app(app_name, to_charlist(new_path))
+  end
+
+  defp downgrade_app({app_name, app_version}, new_path) do
+    :release_handler.downgrade_app(app_name, to_charlist(app_version), to_charlist(new_path))
   end
 
 end

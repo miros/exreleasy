@@ -10,15 +10,25 @@ defmodule Exreleasy.Appups.Appup do
 
   @spec make(App.t, App.t) :: term
   def make(old_app, new_app) do
-    instructions = modules_to_reload(old_app.modules, new_app.modules) ++
-      modules_to_remove(old_app.modules, new_app.modules)
+    old_modules = old_app.modules
+    new_modules = new_app.modules
 
-    case instructions do
+    up_instructions = update_instructions(old_modules, new_modules)
+    down_instructions = update_instructions(new_modules, old_modules)
+
+    case up_instructions do
       [] ->
         {:error, :unchanged}
       [_|_] ->
-        {:ok, {to_charlist(new_app.version), [{to_charlist(old_app.version), instructions}], []}}
+        {:ok, {to_charlist(new_app.version),
+          [{to_charlist(old_app.version), up_instructions}],
+          [{to_charlist(old_app.version), down_instructions}]
+        }}
     end
+  end
+
+  defp update_instructions(old_modules, new_modules) do
+    modules_to_reload(old_modules, new_modules) ++ modules_to_remove(old_modules, new_modules)
   end
 
   defp modules_to_reload(old_modules, new_modules) do

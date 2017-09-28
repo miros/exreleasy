@@ -23,15 +23,11 @@ defmodule Exreleasy.Appups.ApplyAppup do
   end
 
   defp modify_release(release_path, files) do
-    if archived?(release_path) do
+    if String.ends_with?(release_path, ".tar.gz") do
       Release.add_files(release_path, files)
     else
       ReleaseDir.add_files(release_path, files)
     end
-  end
-
-  defp archived?(path) do
-    Regex.match?(~r/\.tar\.gz\z/i, path)
   end
 
   defp apppup_path(app_name) do

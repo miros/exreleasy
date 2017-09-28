@@ -26,7 +26,8 @@ defmodule Exreleasy.Appups.AppupTest do
 
     description = {'0.0.2',
       [{'0.0.1', [{:update, SomeModule, {:advanced, :ok}}]}],
-    []}
+      [{'0.0.1', [{:update, SomeModule, {:advanced, :ok}}]}],
+    }
 
     assert {:ok, description} == Appup.make(old_app, new_app)
   end
@@ -44,7 +45,8 @@ defmodule Exreleasy.Appups.AppupTest do
 
     description = {'0.0.2',
       [{'0.0.1', [{:load_module, SomeModule}]}],
-    []}
+      [{'0.0.1', [{:delete_module, SomeModule}]}],
+    }
 
     assert {:ok, description} == Appup.make(old_app, new_app)
   end
@@ -62,7 +64,8 @@ defmodule Exreleasy.Appups.AppupTest do
 
     description = {'0.0.2',
       [{'0.0.1', [{:delete_module, SomeModule}]}],
-    []}
+      [{'0.0.1', [{:load_module, SomeModule}]}],
+    }
 
     assert {:ok, description} == Appup.make(old_app, new_app)
   end

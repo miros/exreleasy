@@ -2,13 +2,16 @@ defmodule Mix.Tasks.Exreleasy.HotReload do
   use Mix.Task
   import Exreleasy.MixTask
 
-  alias Exreleasy.Appups.Storage, as: AppupStorage
-
+  alias Exreleasy.Manifests.Storage, as: ManifestStorage
+  alias Exreleasy.Manifests.Manifest
+  alias Exreleasy.HotReloader
 
   @moduledoc """
     Reloads given apps on running node
 
         mix exreleasy.hotreload --node your_app@some-host --cookie 12345 --new-path /path/to/your/new/build/ --apps=first_app,second_app --reload-configs
+        mix exreleasy.hotreload --node your_app@some-host --cookie 12345 --new-path /path/to/your/new/build/ --apps=first_app,second_app --reload-configs --downgrade
+
   """
 
   @shortdoc "Creates appup files for applications"
@@ -44,18 +47,34 @@ defmodule Mix.Tasks.Exreleasy.HotReload do
 
   defp do_reload(options) do
     node = String.to_atom(options[:node])
-    apps = apps_to_reload(options)
 
-    Exreleasy.HotReloader.reload(node, options[:new_project_path], apps,
-      reload_configs: options[:reload_configs])
+    with {:ok, apps} <- apps_to_reload(options) do
+      new_path = options[:new_project_path]
+
+      if options[:downgrade] do
+        HotReloader.downgrade(node, new_path, apps, options)
+      else
+        HotReloader.upgrade(node, new_path, apps, options)
+      end
+    end
   end
 
   defp apps_to_reload(options) do
-    if options[:apps] do
-      Enum.map(options[:apps], &String.to_atom/1)
-    else
-      AppupStorage.apps_to_reload(options[:new_project_path])
+    manifest_path = Path.join(options[:new_project_path], Manifest.in_release_path())
+    with {:ok, manifest} <- ManifestStorage.load(manifest_path) do
+      all_apps = for {app_name, %{version: app_version}} <- manifest.apps, do: {app_name, app_version}
+
+      if options[:apps] do
+        {:ok, filter_apps(all_apps, options)}
+      else
+        {:ok, all_apps}
+      end
     end
+  end
+
+  defp filter_apps(apps, options) do
+    apps_to_reload = Enum.map(options[:apps], &String.to_atom/1)
+    apps |> Enum.filter(fn({app_name, _}) -> app_name in apps_to_reload end)
   end
 
   defp cli_description do
@@ -88,14 +107,20 @@ defmodule Mix.Tasks.Exreleasy.HotReload do
           help: "Applications to reload",
           parser: fn (str) -> {:ok, String.split(str, ",")} end,
           required: false
-        ],
+        ]
       ],
       flags: [
         reload_configs: [
           value_name: "RELOAD_CONFIGS",
           long: "--reload-configs",
           help: "Reload configs as well",
-        ]
+        ],
+        downgrade: [
+          value_name: "DOWNGRADE",
+          long: "--downgrade",
+          help: "Downgrade application",
+          required: false
+        ],
       ]
     ]
   end

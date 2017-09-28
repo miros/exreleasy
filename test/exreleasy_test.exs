@@ -42,11 +42,13 @@ defmodule ExreleasyTest do
 
     release_path = Path.join(@release_path, "archive/test_release.tar.gz")
 
-    expected_data = ~s|[{test_app,{"0.1.0",[{"0.1.0",[{load_module,'Elixir.TestApp'}]}],[]}}].\n|
-    assert {:ok, expected_data} == Release.read_file(release_path, "release/appups")
+    {:ok, new_appups_data} = Release.read_file(release_path, "release/appups")
+    assert String.contains?(new_appups_data, ~s|[{"0.1.0",[{load_module,'Elixir.TestApp'}]}]|)
+    assert String.starts_with?(new_appups_data, "[{test_app,")
 
-    expected_data = ~s|{"0.1.0",[{"0.1.0",[{load_module,'Elixir.TestApp'}]}],[]}.\n|
-    assert {:ok, expected_data} == Release.read_file(release_path, "_build/dev/lib/test_app/ebin/test_app.appup")
+    {:ok, new_appup_data} = Release.read_file(release_path, "_build/dev/lib/test_app/ebin/test_app.appup")
+    assert String.contains?(new_appup_data, ~s|[{"0.1.0",[{load_module,'Elixir.TestApp'}]}]|)
+    assert String.starts_with?(new_appup_data, ~s|{"0.1.0",|)
 
     File.rm(Path.join(@release_path, "appups"))
   end
