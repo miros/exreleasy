@@ -26,8 +26,20 @@ defmodule Mix.Tasks.Exreleasy.HotReload do
   end
 
   defp start_distributed_erlang(options) do
-    Node.start(:hot_reload_client, :shortnames)
+    Node.start(:hot_reload_client, distributed_mode_for(options[:node]))
     Node.set_cookie(Node.self, String.to_atom(options[:cookie]))
+  end
+
+  defp distributed_mode_for(node) do
+    if fully_qualified?(node) do
+      :longnames
+    else
+      :shortnames
+    end
+  end
+
+  defp fully_qualified?(node) do
+    Regex.match?(~r/\.[a-zA-Z0-9-]+\Z/, to_string(node))
   end
 
   defp do_reload(options) do

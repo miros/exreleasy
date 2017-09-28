@@ -47,6 +47,8 @@ defmodule ExreleasyTest do
 
     expected_data = ~s|{"0.1.0",[{"0.1.0",[{load_module,'Elixir.TestApp'}]}],[]}.\n|
     assert {:ok, expected_data} == Release.read_file(release_path, "_build/dev/lib/test_app/ebin/test_app.appup")
+
+    File.rm(Path.join(@release_path, "appups"))
   end
 
   defp assert_exists(path) do
