@@ -7,8 +7,8 @@ defmodule Mix.Tasks.Exreleasy.CreateAppup do
   @moduledoc """
     Creates appup file
 
-        mix exreleasy.create_appup --old-release /path/to/your/old/release.tar.gz --new-release /path/to/your/new/release.tar.gz
-        mix exreleasy.create_appup --old-release /path/to/your/old/manifest.json --new-release /path/to/your/new/manifest.json
+        mix exreleasy.create_appup --old-release /path/to/your/old/release.tar.gz --new-release /path/to/your/new/release.tar.gz --appup /path/to/created/appup
+        mix exreleasy.create_appup --old-release /path/to/your/old/manifest.json --new-release /path/to/your/new/manifest.json --appup /path/to/created/appup
 
   """
 

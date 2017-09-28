@@ -8,7 +8,7 @@ defmodule Mix.Tasks.Exreleasy.Digest do
   @moduledoc """
     Digests all project applications and creates release manifest
 
-        mix exreleasy.digest your_app_name
+        mix exreleasy.digest
   """
   @shortdoc "Creates release manifest"
   def run(_) do

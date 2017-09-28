@@ -8,7 +8,7 @@ defmodule Mix.Tasks.Exreleasy.HotReload do
   @moduledoc """
     Reloads given apps on running node
 
-        mix exreleasy.hotreload --node your_app@some-host --cookie 12345 --new-project-path /path/to/your/new/build/ --apps=first_app,second_app
+        mix exreleasy.hotreload --node your_app@some-host --cookie 12345 --new-path /path/to/your/new/build/ --apps=first_app,second_app --reload-configs
   """
 
   @shortdoc "Creates appup files for applications"
