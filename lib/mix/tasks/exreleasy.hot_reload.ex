@@ -9,8 +9,8 @@ defmodule Mix.Tasks.Exreleasy.HotReload do
   @moduledoc """
     Reloads given apps on running node
 
-        mix exreleasy.hotreload --node your_app@some-host --cookie 12345 --new-path /path/to/your/new/build/ --apps=first_app,second_app --reload-configs
-        mix exreleasy.hotreload --node your_app@some-host --cookie 12345 --new-path /path/to/your/new/build/ --apps=first_app,second_app --reload-configs --downgrade
+        mix exreleasy.hotreload --upgrade --node your_app@some-host --cookie 12345 --new-path /path/to/your/new/build/ --apps=first_app,second_app --reload-configs
+        mix exreleasy.hotreload --downgrade --node your_app@some-host --cookie 12345 --new-path /path/to/your/new/build/ --apps=first_app,second_app --reload-configs
 
   """
 
@@ -49,18 +49,21 @@ defmodule Mix.Tasks.Exreleasy.HotReload do
     node = String.to_atom(options[:node])
 
     with {:ok, apps} <- apps_to_reload(options) do
-      new_path = options[:new_project_path]
+      code_path = options[:code_path]
 
-      if options[:downgrade] do
-        HotReloader.downgrade(node, new_path, apps, options)
-      else
-        HotReloader.upgrade(node, new_path, apps, options)
+      cond do
+        options[:upgrade] ->
+          HotReloader.upgrade(node, code_path, apps, options)
+        options[:downgrade] ->
+          HotReloader.downgrade(node, code_path, apps, options)
+        true ->
+          raise "Supply either --upgrade or --downgrade flag"
       end
     end
   end
 
   defp apps_to_reload(options) do
-    manifest_path = Path.join(options[:new_project_path], Manifest.in_release_path())
+    manifest_path = Path.join(options[:code_path], Manifest.in_release_path())
     with {:ok, manifest} <- ManifestStorage.load(manifest_path) do
       all_apps = for {app_name, %{version: app_version}} <- manifest.apps, do: {app_name, app_version}
 
@@ -95,10 +98,10 @@ defmodule Mix.Tasks.Exreleasy.HotReload do
           help: "Cookie for connecting to remote node",
           required: true
         ],
-        new_project_path: [
-          value_name: "NEW_PROJECT_PATH",
-          long: "--new-path",
-          help: "Path to new project code",
+        code_path: [
+          value_name: "CODE_PATH",
+          long: "--code-path",
+          help: "Path to project code to load",
           required: true
         ],
         apps: [
@@ -119,7 +122,11 @@ defmodule Mix.Tasks.Exreleasy.HotReload do
           value_name: "DOWNGRADE",
           long: "--downgrade",
           help: "Downgrade application",
-          required: false
+        ],
+        upgrade: [
+          value_name: "UPGRADE",
+          long: "--upgrade",
+          help: "Upgrade application",
         ],
       ]
     ]
