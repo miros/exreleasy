@@ -23,6 +23,10 @@ defmodule Exreleasy.HotReloader do
     GenServer.call({__MODULE__, node}, {:reload, code_path, apps, Map.new(options)})
   end
 
+  def init([]) do
+    {:ok, []}
+  end
+
   def handle_call({:reload, code_path, apps, options}, _from, state) do
     reloader = Map.fetch!(options, :reloader)
     reply = with :ok <- reload_apps(code_path, apps, reloader),

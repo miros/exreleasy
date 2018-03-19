@@ -17,8 +17,6 @@ defmodule Exreleasy.Manifests.App do
     %App{version: options["version"], modules: modules}
   end
 
-  require IEx
-
   @spec digest(atom) :: t
   def digest(app_name) do
     with :ok <- CurrentProject.ensure_loaded(app_name),
