@@ -56,8 +56,9 @@ defmodule Exreleasy.HotReloader do
 
   defp do_reload_configs(code_path) do
     Path.join(code_path, "config/config.exs")
-    |> Mix.Config.read!
-    |> Mix.Config.persist
+    |> Mix.Config.eval!()
+    |> elem(0)
+    |> Mix.Config.persist()
     :ok
   rescue
     exc -> {:error, exc}
