@@ -14,7 +14,7 @@ defmodule ExreleasyTest do
     docker_build_image(@bare_image, "test/Dockerfile.bare")
 
     File.rm_rf!(@release_path)
-    docker_run(@elixir_image, "mix deps.get && mix compile && mix exreleasy.release test_release")
+    docker_run(@elixir_image, "mix local.hex --force && mix deps.get && mix compile && mix exreleasy.release test_release")
 
     :ok
   end
@@ -32,12 +32,12 @@ defmodule ExreleasyTest do
 
   @tag timeout: 3 * 60 * 1000
   test "it creates appup file for hot reload" do
-    docker_run(@elixir_image, "mix exreleasy.create_appup \
+    docker_run(@elixir_image, "mix local.hex --force && mix exreleasy.create_appup \
       --old-release empty_manifest.json --new-release release/archive/test_release.tar.gz --appup release/appups")
 
     assert_exists("appups")
 
-    docker_run(@elixir_image, "mix exreleasy.apply_appup \
+    docker_run(@elixir_image, "mix local.hex --force && mix exreleasy.apply_appup \
       --release release/archive/test_release.tar.gz --appup release/appups")
 
     release_path = Path.join(@release_path, "archive/test_release.tar.gz")
@@ -63,7 +63,16 @@ defmodule ExreleasyTest do
   end
 
   defp docker_run(image_name, cmd) do
-    Sys.cmd! "docker run --rm=true -v $(pwd):/exreleasy -v $(pwd)/test_app:/test_app -w /test_app #{image_name} /bin/bash -c '#{cmd}'"
+    Sys.cmd! """
+    docker run \
+    --rm=true \
+    --user=\"$(id -u):$(id -g)\" \
+    -e MIX_HOME=/tmp \
+    -e HOME=/tmp \
+    -v $(pwd):/exreleasy \
+    -v $(pwd)/test_app:/test_app \
+    -w /test_app #{image_name} /bin/bash -c '#{cmd}'
+    """
   end
 
 end
