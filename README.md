@@ -6,13 +6,13 @@ Standard Erlang/Elixir release tools generally attempt to generate a self contai
 
 To the contrary, `exreleasy` tries to untie developer's hands and decouple release activities.
 
-This tool allows to *seperately*:
+This tool allows to *separately*:
 * bundle an application and Erlang/Elixir with a single `mix` command and create wrapper scripts for running `mix`/`iex`;
 * generate a draft for an appup file for migrating from any existing release to another one;
 * perfom a hot code reload for a running node.
 
-This is often required nowdays when we have special tools for each task, for example:
-* deliver application code with Ansible(SaltStack or some other orchestration tool);
+This is often required nowadays when we have special tools for each task, for example:
+* deliver application code with Ansible, SaltStack or some other orchestration tool;
 * launch nodes with Systemd generating units with an orchestration tool;
 * perform maintenance tasks like running migrations or code reload with an orchestration tool.
 
