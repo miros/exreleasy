@@ -1,3 +1,7 @@
+# ⛔️ DEPRECATED Exreleasy
+
+This tool is deprecated. Please, use native mix releases (added in elixir 1.9.0) https://hexdocs.pm/mix/Mix.Tasks.Release.html
+
 # Exreleasy
 
 A minimal tool for releasing (packaging and hot updating) Elixir applications.
