@@ -1,4 +1,4 @@
-# ⛔️ DEPRECATED Exreleasy
+# ⛔️ DEPRECATED
 
 This tool is deprecated. Please, use native mix releases (added in elixir 1.9.0) https://hexdocs.pm/mix/Mix.Tasks.Release.html
 
